@@ -43,13 +43,16 @@ const openModal = (modal) => {
   addHandleModalCrossButton(modal);
 };
 
-function addModalByClickOnObject(clickedObj, modal) {
+function addModalByClickOnObject(clickedObj, modal, initModalFun) {
   clickedObj.addEventListener('click', function (evt) {
     openModal(modal);
+    if (initModalFun) {
+      initModalFun();
+    }
   });
 }
 
-export { addModalByClickOnObject, addHandleModalCrossButton };
+export { addModalByClickOnObject, addHandleModalCrossButton, closeModal };
 
 /*
 const handleEscKeyUp = (e) => {
