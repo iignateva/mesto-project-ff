@@ -39,6 +39,7 @@ const profileEditFormSubmit = (evt) => {
   updatingProfileTitle.textContent = profileEditFormNameInput.value;
   const updatingProfileDesc = document.querySelector('.profile__description');
   updatingProfileDesc.textContent = profileEditFormJobInput.value;
+  profileEditForm.reset();
   closeModal(popupEditProfile);
 };
 
@@ -47,13 +48,37 @@ profileEditForm.addEventListener('submit', profileEditFormSubmit);
 const profileEditButton = document.querySelector('.profile__edit-button');
 addModalByClickOnObject(profileEditButton, popupEditProfile, initProfileForm);
 
+const addNewCardForm = popupAddNewCard.querySelector('.popup__form');
+const addNewCardFormNameInput = addNewCardForm.querySelector(
+  '.popup__input_type_card-name'
+);
+const addNewCardFormUrlInput = addNewCardForm.querySelector(
+  '.popup__input_type_url'
+);
+
+const addNewCardFormSubmit = (evt) => {
+  evt.preventDefault();
+
+  cardPlacesNode.prepend(createCard({
+    name: addNewCardFormNameInput.value,
+    link: addNewCardFormUrlInput.value,
+  }));
+  addNewCardForm.reset();
+  closeModal(popupAddNewCard);
+};
+
+addNewCardForm.addEventListener('submit', addNewCardFormSubmit);
+
 const addNewCardButton = document.querySelector('.profile__add-button');
 addModalByClickOnObject(addNewCardButton, popupAddNewCard);
 
+function createCard(card) {
+  return createCardItemOnTemplate(cardTemplate, card, deleteCard);
+}
+
 function createCards() {
   initialCards.forEach((card) => {
-    const cardItem = createCardItemOnTemplate(cardTemplate, card, deleteCard);
-    cardPlacesNode.append(cardItem);
+    cardPlacesNode.append(createCard(card));
   });
 }
 
