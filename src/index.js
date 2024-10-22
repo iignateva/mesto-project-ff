@@ -1,25 +1,22 @@
 import './pages/index.css';
-import { initialCards  } from './scripts/cards';
+import { initialCards } from './scripts/cards';
+import { createCardItemOnTemplate, deleteCard } from './components/card';
+import { addModalByClickOnObject } from './components/modal';
 
-// @todo: Темплейт карточки
+// Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
 
-// @todo: DOM узлы
+// DOM узлы
 const cardPlacesNode = document.querySelector('.places .places__list');
 
-// @todo: Функция создания карточки
-function createCardItemOnTemplate(cardTemplate, card, deleteCardFunction) {
-  const cardItem = cardTemplate.querySelector('.card').cloneNode(true);
-  const cardImage = cardItem.querySelector('.card__image');
-  cardImage.src = card.link;
-  cardImage.alt = card.name;
-  cardItem.querySelector('.card__description .card__title').textContent =
-    card.name;
-  cardItem
-    .querySelector('.card .card__delete-button')
-    .addEventListener('click', () => deleteCardFunction(cardItem));
-  return cardItem;
-}
+const popupEditProfile = document.querySelector('.popup_type_edit');
+const popupAddNewCard = document.querySelector('.popup_type_new-card');
+//const popupShowImage = document.querySelector('.popup_type_image');
+
+const profileEditButton = document.querySelector('.profile__edit-button');
+addModalByClickOnObject(profileEditButton, popupEditProfile);
+const addNewCardButton = document.querySelector('.profile__add-button');
+addModalByClickOnObject(addNewCardButton, popupAddNewCard);
 
 function createCards() {
   initialCards.forEach((card) => {
@@ -28,10 +25,5 @@ function createCards() {
   });
 }
 
-// @todo: Функция удаления карточки
-function deleteCard(cardItem) {
-  cardItem.remove();
-}
-
-// @todo: Вывести карточки на страницу
+// Вывести карточки на страницу
 createCards();
