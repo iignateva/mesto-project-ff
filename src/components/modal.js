@@ -1,9 +1,7 @@
 const openedModalCssClass = 'popup_is-opened';
-const openedModalSelector = '.popup_is-opened';
-const modalCrossButtonSelector = '.popup__close';
 
-function findOpenModalAndClose() {
-  const openedModal = document.querySelector(openedModalSelector);
+function findOpenModalAndCloseIt() {
+  const openedModal = document.querySelector('.popup_is-opened');
   if (openedModal) {
     closeModal(openedModal);
   }
@@ -11,13 +9,13 @@ function findOpenModalAndClose() {
 
 const handleEscKeyUp = (evt) => {
   if (evt.key === 'Escape') {
-    findOpenModalAndClose();
+    findOpenModalAndCloseIt();
   }
 };
 
 const handleClickOnOverlay = (evt) => {
   if (evt.target.classList.contains('popup')) {
-    findOpenModalAndClose();
+    findOpenModalAndCloseIt();
   }
 }
 
@@ -28,7 +26,7 @@ const closeModal = (modal) => {
 };
 
 const addHandleModalCrossButton = (modal) => {
-  const crossButton = modal.querySelector(modalCrossButtonSelector);
+  const crossButton = modal.querySelector('.popup__close');
   if (crossButton) {
     crossButton.addEventListener('click', () => {
       closeModal(modal);
@@ -43,7 +41,7 @@ const openModal = (modal) => {
   addHandleModalCrossButton(modal);
 };
 
-function addModalByClickOnObject(clickedObj, modal, initModalFun) {
+function openModalByClickOnObject(clickedObj, modal, initModalFun) {
   clickedObj.addEventListener('click', function (evt) {
     openModal(modal);
     if (initModalFun) {
@@ -52,4 +50,4 @@ function addModalByClickOnObject(clickedObj, modal, initModalFun) {
   });
 }
 
-export { addModalByClickOnObject, addHandleModalCrossButton, closeModal };
+export { openModalByClickOnObject, closeModal };

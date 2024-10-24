@@ -1,29 +1,17 @@
 import './pages/index.css';
 import { initialCards } from './scripts/cards';
-import { createCardItemOnTemplate, deleteCard } from './components/card';
-import { addModalByClickOnObject, closeModal } from './components/modal';
+import {
+  createCardItemOnTemplate,
+  deleteCard,
+  likeCard,
+} from './components/card';
+import { openModalByClickOnObject, closeModal } from './components/modal';
 
-// Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
 
-// DOM узлы
 const cardPlacesNode = document.querySelector('.places .places__list');
 
 const popupEditProfile = document.querySelector('.popup_type_edit');
-const popupAddNewCard = document.querySelector('.popup_type_new-card');
-const popupShowImage = document.querySelector('.popup_type_image');
-
-const initProfileForm = () => {
-  const profileForm = document.forms['edit-profile'];
-  if (profileForm) {
-    profileForm.elements.name.value =
-      document.querySelector('.profile__title').textContent;
-    profileForm.elements.description.value = document.querySelector(
-      '.profile__description'
-    ).textContent;
-  }
-};
-
 const profileEditForm = popupEditProfile.querySelector('.popup__form');
 const profileEditFormNameInput = profileEditForm.querySelector(
   '.popup__input_type_name'
@@ -46,8 +34,21 @@ const profileEditFormSubmit = (evt) => {
 profileEditForm.addEventListener('submit', profileEditFormSubmit);
 
 const profileEditButton = document.querySelector('.profile__edit-button');
-addModalByClickOnObject(profileEditButton, popupEditProfile, initProfileForm);
+const initProfileForm = () => {
+  const profileForm = document.forms['edit-profile'];
+  if (profileForm) {
+    profileForm.elements.name.value =
+      document.querySelector('.profile__title').textContent;
+    profileForm.elements.description.value = document.querySelector(
+      '.profile__description'
+    ).textContent;
+  }
+};
 
+openModalByClickOnObject(profileEditButton, popupEditProfile, initProfileForm);
+
+
+const popupAddNewCard = document.querySelector('.popup_type_new-card');
 const addNewCardForm = popupAddNewCard.querySelector('.popup__form');
 const addNewCardFormNameInput = addNewCardForm.querySelector(
   '.popup__input_type_card-name'
@@ -70,14 +71,16 @@ const addNewCardFormSubmit = (evt) => {
 addNewCardForm.addEventListener('submit', addNewCardFormSubmit);
 
 const addNewCardButton = document.querySelector('.profile__add-button');
-addModalByClickOnObject(addNewCardButton, popupAddNewCard);
+openModalByClickOnObject(addNewCardButton, popupAddNewCard);
 
+const popupShowImage = document.querySelector('.popup_type_image');
 
 function createCard(card) {
   return createCardItemOnTemplate(
     cardTemplate,
     card,
     deleteCard,
+    likeCard,
     popupShowImage
   );
 }
