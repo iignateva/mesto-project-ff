@@ -11,7 +11,7 @@ const cardPlacesNode = document.querySelector('.places .places__list');
 
 const popupEditProfile = document.querySelector('.popup_type_edit');
 const popupAddNewCard = document.querySelector('.popup_type_new-card');
-//const popupShowImage = document.querySelector('.popup_type_image');
+const popupShowImage = document.querySelector('.popup_type_image');
 
 const initProfileForm = () => {
   const profileForm = document.forms['edit-profile'];
@@ -72,8 +72,14 @@ addNewCardForm.addEventListener('submit', addNewCardFormSubmit);
 const addNewCardButton = document.querySelector('.profile__add-button');
 addModalByClickOnObject(addNewCardButton, popupAddNewCard);
 
+
 function createCard(card) {
-  return createCardItemOnTemplate(cardTemplate, card, deleteCard);
+  return createCardItemOnTemplate(
+    cardTemplate,
+    card,
+    deleteCard,
+    popupShowImage
+  );
 }
 
 function createCards() {
