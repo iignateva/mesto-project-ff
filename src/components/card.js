@@ -1,14 +1,12 @@
-import { openModalByClickOnObject } from './modal';
-
 function createCardItemOnTemplate(
   cardTemplate,
+  imagePopup,
   card,
   deleteCardFunction,
   likeCardFunction,
-  imagePopup
+  openModalByClickOnObject
 ) {
   const cardItem = cardTemplate.querySelector('.card').cloneNode(true);
-  
   const cardTitle = cardItem.querySelector('.card__description .card__title');
   cardTitle.textContent = card.name;
 

@@ -17,20 +17,27 @@ const handleClickOnOverlay = (evt) => {
   if (evt.target.classList.contains('popup')) {
     findOpenModalAndCloseIt();
   }
-}
+};
 
 const closeModal = (modal) => {
   modal.classList.remove(openedModalCssClass);
   document.removeEventListener('keyup', handleEscKeyUp);
   modal.removeEventListener('click', handleClickOnOverlay);
+  addOrDeleteHandlerModalCrossButton(modal, false);
 };
 
-const addHandleModalCrossButton = (modal) => {
+const handleModalCrossButton = () => {
+  findOpenModalAndCloseIt();
+};
+
+const addOrDeleteHandlerModalCrossButton = (modal, isOpening) => {
   const crossButton = modal.querySelector('.popup__close');
   if (crossButton) {
-    crossButton.addEventListener('click', () => {
-      closeModal(modal);
-    });
+    if (isOpening) {
+      crossButton.addEventListener('click', handleModalCrossButton);
+    } else {
+      crossButton.removeEventListener('click', handleModalCrossButton);
+    }
   }
 };
 
@@ -38,7 +45,7 @@ const openModal = (modal) => {
   modal.classList.add(openedModalCssClass);
   document.addEventListener('keyup', handleEscKeyUp);
   modal.addEventListener('click', handleClickOnOverlay);
-  addHandleModalCrossButton(modal);
+  addOrDeleteHandlerModalCrossButton(modal, true);
 };
 
 function openModalByClickOnObject(clickedObj, modal, initModalFun) {
