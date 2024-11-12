@@ -6,6 +6,7 @@ import {
   likeCard,
 } from './components/card';
 import { openModalByClickOnObject, closeModal } from './components/modal';
+import { enableValidation } from './components/validation';
 
 const cardTemplate = document.querySelector('#card-template').content;
 const cardPlacesNode = document.querySelector('.places .places__list');
@@ -89,3 +90,13 @@ function createCards() {
 
 // Вывести карточки на страницу
 createCards();
+
+
+enableValidation(
+  '.popup__form',
+  '.popup__input',
+  '.popup__button',
+  'popup__button_disabled',
+  'popup__input_type_error',
+  'popup__error_visible'
+);
