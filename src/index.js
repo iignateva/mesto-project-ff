@@ -6,7 +6,7 @@ import {
   likeCard,
 } from './components/card';
 import { openModalByClickOnObject, closeModal } from './components/modal';
-import { enableValidation } from './components/validation';
+import { clearValidation, enableValidation } from './components/validation';
 
 const cardTemplate = document.querySelector('#card-template').content;
 const cardPlacesNode = document.querySelector('.places .places__list');
@@ -45,7 +45,24 @@ const submitProfileEditForm = (evt) => {
 
 profileEditForm.addEventListener('submit', submitProfileEditForm);
 
+const inputElementSelector = '.popup__input';
+const inputErrorClassName = 'popup__input_type_error';
+const errorVisibleClassName = 'popup__error_visible';
+const submitButtonElementSelector = '.popup__button';
+const inactiveButtonClassName = 'popup__button_disabled';
+
+const clearValidationOnForm = (form) => {
+  clearValidation(form, {
+    inputSelector: inputElementSelector,
+    inputErrorClass: inputErrorClassName,
+    errorVisibleClass: errorVisibleClassName,
+    buttonElementSelector: submitButtonElementSelector,
+    inactiveButtonClass: inactiveButtonClassName,
+  });
+};
+
 const initProfileForm = () => {
+  clearValidationOnForm(profileForm);
   if (profileForm) {
     profileForm.elements.name.value = profileTitle.textContent;
     profileForm.elements.description.value = profileDesc.textContent;
@@ -69,7 +86,18 @@ const addNewCardFormSubmit = (evt) => {
 
 addNewCardForm.addEventListener('submit', addNewCardFormSubmit);
 
-openModalByClickOnObject(addNewCardButton, popupAddNewCard);
+const initAddNewCardForm = () => {
+  addNewCardForm.reset();
+  clearValidationOnForm(addNewCardForm);
+};
+
+openModalByClickOnObject(
+  addNewCardButton,
+  popupAddNewCard,
+  initAddNewCardForm
+);
+
+
 
 function createCard(card) {
   return createCardItemOnTemplate(
@@ -91,12 +119,11 @@ function createCards() {
 // Вывести карточки на страницу
 createCards();
 
-
 enableValidation(
   '.popup__form',
-  '.popup__input',
-  '.popup__button',
-  'popup__button_disabled',
-  'popup__input_type_error',
-  'popup__error_visible'
+  inputElementSelector,
+  submitButtonElementSelector,
+  inactiveButtonClassName,
+  inputErrorClassName,
+  errorVisibleClassName
 );
