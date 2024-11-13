@@ -7,6 +7,7 @@ import {
 } from './components/card';
 import { openModalByClickOnObject, closeModal } from './components/modal';
 import { clearValidation, enableValidation } from './components/validation';
+import { getInfoAboutMe, getCards } from './components/api';
 
 const cardTemplate = document.querySelector('#card-template').content;
 const cardPlacesNode = document.querySelector('.places .places__list');
@@ -34,6 +35,13 @@ const addNewCardFormUrlInput = addNewCardForm.querySelector(
 );
 const popupShowImage = document.querySelector('.popup_type_image');
 const addNewCardButton = document.querySelector('.profile__add-button');
+const profileImage = document.querySelector('.profile__image');
+
+const inputElementSelector = '.popup__input';
+const inputErrorClassName = 'popup__input_type_error';
+const errorVisibleClassName = 'popup__error_visible';
+const submitButtonElementSelector = '.popup__button';
+const inactiveButtonClassName = 'popup__button_disabled';
 
 const submitProfileEditForm = (evt) => {
   evt.preventDefault();
@@ -45,12 +53,6 @@ const submitProfileEditForm = (evt) => {
 
 profileEditForm.addEventListener('submit', submitProfileEditForm);
 
-const inputElementSelector = '.popup__input';
-const inputErrorClassName = 'popup__input_type_error';
-const errorVisibleClassName = 'popup__error_visible';
-const submitButtonElementSelector = '.popup__button';
-const inactiveButtonClassName = 'popup__button_disabled';
-
 const clearValidationOnForm = (form) => {
   clearValidation(form, {
     inputSelector: inputElementSelector,
@@ -58,6 +60,14 @@ const clearValidationOnForm = (form) => {
     errorVisibleClass: errorVisibleClassName,
     buttonElementSelector: submitButtonElementSelector,
     inactiveButtonClass: inactiveButtonClassName,
+  });
+};
+
+const setProfileInfo = () => {
+  getInfoAboutMe().then((profile) => {
+    profileTitle.textContent = profile.name;
+    profileDesc.textContent = profile.about;
+    profileImage.style.backgroundImage = `url(${profile.avatar})`;
   });
 };
 
@@ -91,13 +101,7 @@ const initAddNewCardForm = () => {
   clearValidationOnForm(addNewCardForm);
 };
 
-openModalByClickOnObject(
-  addNewCardButton,
-  popupAddNewCard,
-  initAddNewCardForm
-);
-
-
+openModalByClickOnObject(addNewCardButton, popupAddNewCard, initAddNewCardForm);
 
 function createCard(card) {
   return createCardItemOnTemplate(
@@ -111,12 +115,15 @@ function createCard(card) {
 }
 
 function createCards() {
-  initialCards.forEach((card) => {
-    cardPlacesNode.append(createCard(card));
+  getCards().then((cards) => {
+    cards.forEach((card) => {
+      cardPlacesNode.append(createCard(card));
+    });
   });
 }
 
 // Вывести карточки на страницу
+setProfileInfo();
 createCards();
 
 enableValidation(
