@@ -6,7 +6,7 @@ import {
 } from './components/card';
 import { openModalByClickOnObject, closeModal } from './components/modal';
 import { clearValidation, enableValidation } from './components/validation';
-import { getInfoAboutMeAndCards } from './components/api';
+import { getInfoAboutMeAndCards, patchProfile } from './components/api';
 
 const cardTemplate = document.querySelector('#card-template').content;
 const cardPlacesNode = document.querySelector('.places .places__list');
@@ -44,8 +44,11 @@ const inactiveButtonClassName = 'popup__button_disabled';
 
 const submitProfileEditForm = (evt) => {
   evt.preventDefault();
-  updatingProfileTitle.textContent = profileEditFormNameInput.value;
-  updatingProfileDesc.textContent = profileEditFormJobInput.value;
+  const newProfileInfo = { name: profileEditFormNameInput.value, about: profileEditFormJobInput.value }
+  const patchedProfilePromise = patchProfile(newProfileInfo);
+  patchedProfilePromise.then( (profile) => {
+    setProfileInfo(profile);
+  });
   profileEditForm.reset();
   closeModal(popupEditProfile);
 };

@@ -4,11 +4,14 @@ const baseUrl = `https://nomoreparties.co/v1/${cohortId}`;
 
 const baseHeaders = {
   authorization: token,
+  'Content-Type': 'application/json'
 };
 
-const doFetch = (endpoint) => {
+const doFetch = (endpoint, method, body) => {
   return fetch(`${baseUrl}/${endpoint}`, {
+    method: method,
     headers: baseHeaders,
+    body: body
   })
     .then((res) => {
       if (res.ok) {
@@ -23,11 +26,11 @@ const doFetch = (endpoint) => {
 };
 
 const getInfoAboutMe = () => {
-  return doFetch('/users/me');
+  return doFetch('/users/me', 'GET');
 };
 
 const getCards = () => {
-  return doFetch('/cards');
+  return doFetch('/cards', 'GET');
 };
 
 const getInfoAboutMeAndCards = () => {
@@ -36,4 +39,8 @@ const getInfoAboutMeAndCards = () => {
   return [profileInfo, cards];
 };
 
-export { getInfoAboutMeAndCards };
+const patchProfile = (profile) => {
+  return doFetch('/users/me', 'PATCH', JSON.stringify(profile)); 
+}
+
+export { getInfoAboutMeAndCards, patchProfile };
