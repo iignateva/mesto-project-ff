@@ -6,7 +6,11 @@ import {
 } from './components/card';
 import { openModalByClickOnObject, closeModal } from './components/modal';
 import { clearValidation, enableValidation } from './components/validation';
-import { getInfoAboutMeAndCards, patchProfile } from './components/api';
+import {
+  getInfoAboutMeAndCards,
+  patchProfile,
+  postCard,
+} from './components/api';
 
 const cardTemplate = document.querySelector('#card-template').content;
 const cardPlacesNode = document.querySelector('.places .places__list');
@@ -44,9 +48,12 @@ const inactiveButtonClassName = 'popup__button_disabled';
 
 const submitProfileEditForm = (evt) => {
   evt.preventDefault();
-  const newProfileInfo = { name: profileEditFormNameInput.value, about: profileEditFormJobInput.value }
+  const newProfileInfo = {
+    name: profileEditFormNameInput.value,
+    about: profileEditFormJobInput.value,
+  };
   const patchedProfilePromise = patchProfile(newProfileInfo);
-  patchedProfilePromise.then( (profile) => {
+  patchedProfilePromise.then((profile) => {
     setProfileInfo(profile);
   });
   profileEditForm.reset();
@@ -84,14 +91,16 @@ openModalByClickOnObject(profileEditButton, popupEditProfile, initProfileForm);
 const addNewCardFormSubmit = (evt) => {
   evt.preventDefault();
 
-  cardPlacesNode.prepend(
-    createCard({
-      name: addNewCardFormNameInput.value,
-      link: addNewCardFormUrlInput.value,
-    })
-  );
-  addNewCardForm.reset();
-  closeModal(popupAddNewCard);
+  const newCard = {
+    name: addNewCardFormNameInput.value,
+    link: addNewCardFormUrlInput.value,
+  };
+
+  postCard(newCard).then((newCard) => {
+    cardPlacesNode.prepend(createCard(newCard));
+    addNewCardForm.reset();
+    closeModal(popupAddNewCard);
+  });
 };
 
 addNewCardForm.addEventListener('submit', addNewCardFormSubmit);

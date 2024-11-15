@@ -43,4 +43,9 @@ const patchProfile = (profile) => {
   return doFetch('/users/me', 'PATCH', JSON.stringify(profile)); 
 }
 
-export { getInfoAboutMeAndCards, patchProfile };
+const postCard = (card) => {
+  return doFetch('/cards', 'POST', JSON.stringify(card));
+}
+
+
+export { getInfoAboutMeAndCards, patchProfile, postCard };
