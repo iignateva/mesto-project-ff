@@ -12,6 +12,10 @@ function createCardItemOnTemplate(
 
   const deleteCardButton = cardItem.querySelector('.card .card__delete-button');
   const likeCardButton = cardItem.querySelector('.card__like-button');
+  const likesCount = cardItem.querySelector('.card__likes-count');
+  if (card.likes.length > 0) {
+    likesCount.textContent = card.likes.length;
+  }
   deleteCardButton.addEventListener('click', () =>
     deleteCardFunction(cardItem)
   );
