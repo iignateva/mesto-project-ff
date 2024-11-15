@@ -30,4 +30,10 @@ const getCards = () => {
   return doFetch('/cards');
 };
 
-export { getInfoAboutMe, getCards };
+const getInfoAboutMeAndCards = () => {
+  const profileInfo = getInfoAboutMe();
+  const cards = getCards();
+  return [profileInfo, cards];
+};
+
+export { getInfoAboutMeAndCards };

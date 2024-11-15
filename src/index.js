@@ -1,5 +1,4 @@
 import './pages/index.css';
-import { initialCards } from './scripts/cards';
 import {
   createCardItemOnTemplate,
   deleteCard,
@@ -7,7 +6,7 @@ import {
 } from './components/card';
 import { openModalByClickOnObject, closeModal } from './components/modal';
 import { clearValidation, enableValidation } from './components/validation';
-import { getInfoAboutMe, getCards } from './components/api';
+import { getInfoAboutMeAndCards } from './components/api';
 
 const cardTemplate = document.querySelector('#card-template').content;
 const cardPlacesNode = document.querySelector('.places .places__list');
@@ -63,12 +62,10 @@ const clearValidationOnForm = (form) => {
   });
 };
 
-const setProfileInfo = () => {
-  getInfoAboutMe().then((profile) => {
-    profileTitle.textContent = profile.name;
-    profileDesc.textContent = profile.about;
-    profileImage.style.backgroundImage = `url(${profile.avatar})`;
-  });
+const setProfileInfo = (profile) => {
+  profileTitle.textContent = profile.name;
+  profileDesc.textContent = profile.about;
+  profileImage.style.backgroundImage = `url(${profile.avatar})`;
 };
 
 const initProfileForm = () => {
@@ -114,17 +111,22 @@ function createCard(card) {
   );
 }
 
-function createCards() {
-  getCards().then((cards) => {
-    cards.forEach((card) => {
-      cardPlacesNode.append(createCard(card));
-    });
+function createCards(cards) {
+  cards.forEach((card) => {
+    cardPlacesNode.append(createCard(card));
+  });
+}
+
+function fillPage() {
+  const promises = getInfoAboutMeAndCards();
+  Promise.all(promises).then((results) => {
+    setProfileInfo(results[0]);
+    createCards(results[1]);
   });
 }
 
 // Вывести карточки на страницу
-setProfileInfo();
-createCards();
+fillPage();
 
 enableValidation(
   '.popup__form',
