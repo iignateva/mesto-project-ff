@@ -10,6 +10,7 @@ import {
   getInfoAboutMeAndCards,
   patchProfile,
   postCard,
+  deleteCardById,
 } from './components/api';
 
 const cardTemplate = document.querySelector('#card-template').content;
@@ -43,8 +44,24 @@ const profileImage = document.querySelector('.profile__image');
 const inputElementSelector = '.popup__input';
 const inputErrorClassName = 'popup__input_type_error';
 const errorVisibleClassName = 'popup__error_visible';
-const submitButtonElementSelector = '.popup__button';
+const popupButtonElementSelector = '.popup__button';
 const inactiveButtonClassName = 'popup__button_disabled';
+
+const popupDeleteAccept = document.querySelector('.popup_type_action-accept');
+const deleteAcceptButtonOk = popupDeleteAccept.querySelector(
+  popupButtonElementSelector
+);
+
+const deleteCardHandler = () => {
+  const cardId = popupDeleteAccept.cardId;
+  const cardNode = popupDeleteAccept.cardNode;
+  if (cardId && cardNode) {
+    deleteCardById(cardId);
+    deleteCard(cardNode);
+  }
+  closeModal(popupDeleteAccept);
+};
+deleteAcceptButtonOk.addEventListener('click', deleteCardHandler);
 
 const submitProfileEditForm = (evt) => {
   evt.preventDefault();
@@ -67,7 +84,7 @@ const clearValidationOnForm = (form) => {
     inputSelector: inputElementSelector,
     inputErrorClass: inputErrorClassName,
     errorVisibleClass: errorVisibleClassName,
-    buttonElementSelector: submitButtonElementSelector,
+    buttonElementSelector: popupButtonElementSelector,
     inactiveButtonClass: inactiveButtonClassName,
   });
 };
@@ -97,7 +114,7 @@ const addNewCardFormSubmit = (evt) => {
   };
 
   postCard(newCard).then((newCard) => {
-    cardPlacesNode.prepend(createCard(newCard));
+    cardPlacesNode.prepend(createCard(newCard, newCard.owner));
     addNewCardForm.reset();
     closeModal(popupAddNewCard);
   });
@@ -112,28 +129,31 @@ const initAddNewCardForm = () => {
 
 openModalByClickOnObject(addNewCardButton, popupAddNewCard, initAddNewCardForm);
 
-function createCard(card) {
+function createCard(card, profile) {
   return createCardItemOnTemplate(
     cardTemplate,
     popupShowImage,
     card,
+    profile,
     deleteCard,
+    popupDeleteAccept,
     likeCard,
     openModalByClickOnObject
   );
 }
 
-function createCards(cards) {
+function createCards(cards, profile) {
   cards.forEach((card) => {
-    cardPlacesNode.append(createCard(card));
+    cardPlacesNode.append(createCard(card, profile));
   });
 }
 
 function fillPage() {
   const promises = getInfoAboutMeAndCards();
   Promise.all(promises).then((results) => {
-    setProfileInfo(results[0]);
-    createCards(results[1]);
+    const profile = results[0];
+    setProfileInfo(profile);
+    createCards(results[1], profile);
   });
 }
 
@@ -143,7 +163,7 @@ fillPage();
 enableValidation(
   '.popup__form',
   inputElementSelector,
-  submitButtonElementSelector,
+  popupButtonElementSelector,
   inactiveButtonClassName,
   inputErrorClassName,
   errorVisibleClassName

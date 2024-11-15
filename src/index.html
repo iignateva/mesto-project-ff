@@ -20,9 +20,7 @@
       </header>
       <main class="content">
         <section class="profile page__section">
-          <div
-            class="profile__image"
-          ></div>
+          <div class="profile__image"></div>
           <div class="profile__info">
             <h1 class="profile__title"></h1>
             <button
@@ -59,7 +57,7 @@
               data-error-empty-value-message="Вы пропустили это поле."
               required
             />
-            <span class="popup__error edit-profile-name-error"></span> 
+            <span class="popup__error edit-profile-name-error"></span>
             <input
               id="edit-profile-description"
               type="text"
@@ -73,7 +71,7 @@
               data-error-empty-value-message="Вы пропустили это поле."
               required
             />
-            <span class="popup__error edit-profile-description-error"></span> 
+            <span class="popup__error edit-profile-description-error"></span>
             <button type="submit" class="button popup__button">
               Сохранить
             </button>
@@ -98,7 +96,7 @@
               data-error-empty-value-message="Вы пропустили это поле."
               required
             />
-            <span class="popup__error new-place-name-error"></span> 
+            <span class="popup__error new-place-name-error"></span>
             <input
               id="new-place-link"
               type="url"
@@ -108,7 +106,7 @@
               data-error-empty-value-message="Вы пропустили это поле."
               required
             />
-            <span class="popup__error new-place-link-error"></span> 
+            <span class="popup__error new-place-link-error"></span>
             <button type="submit" class="button popup__button">
               Сохранить
             </button>
@@ -121,6 +119,15 @@
           <img src="" alt="" class="popup__image" />
           <p class="popup__caption"></p>
         </div>
+      </div>
+    </div>
+
+    <div class="popup popup_type_action-accept" cardId cardNode>
+      <div class="popup__content popup__content_accept">
+        <h2>Вы уверены?</h2>
+        <span class="popup__error new-place-link-error"></span>
+        <button type="button" class="button popup__button">Да</button>
+        <button type="button" class="popup__close"></button>
       </div>
     </div>
 

@@ -4,14 +4,14 @@ const baseUrl = `https://nomoreparties.co/v1/${cohortId}`;
 
 const baseHeaders = {
   authorization: token,
-  'Content-Type': 'application/json'
+  'Content-Type': 'application/json',
 };
 
 const doFetch = (endpoint, method, body) => {
   return fetch(`${baseUrl}/${endpoint}`, {
     method: method,
     headers: baseHeaders,
-    body: body
+    body: body,
   })
     .then((res) => {
       if (res.ok) {
@@ -40,12 +40,17 @@ const getInfoAboutMeAndCards = () => {
 };
 
 const patchProfile = (profile) => {
-  return doFetch('/users/me', 'PATCH', JSON.stringify(profile)); 
-}
+  return doFetch('/users/me', 'PATCH', JSON.stringify(profile));
+};
 
 const postCard = (card) => {
   return doFetch('/cards', 'POST', JSON.stringify(card));
-}
+};
 
+const deleteCardById = (cardId) => {
+  if (cardId) {
+    return doFetch(`/cards/${cardId}`, 'DELETE');
+  }
+};
 
-export { getInfoAboutMeAndCards, patchProfile, postCard };
+export { getInfoAboutMeAndCards, patchProfile, postCard, deleteCardById };

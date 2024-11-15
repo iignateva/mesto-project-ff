@@ -2,7 +2,9 @@ function createCardItemOnTemplate(
   cardTemplate,
   imagePopup,
   card,
+  profile,
   deleteCardFunction,
+  deleteAcceptPopup,
   likeCardFunction,
   openModalByClickOnObject
 ) {
@@ -10,15 +12,23 @@ function createCardItemOnTemplate(
   const cardTitle = cardItem.querySelector('.card__description .card__title');
   cardTitle.textContent = card.name;
 
-  const deleteCardButton = cardItem.querySelector('.card .card__delete-button');
-  const likeCardButton = cardItem.querySelector('.card__like-button');
   const likesCount = cardItem.querySelector('.card__likes-count');
   if (card.likes.length > 0) {
     likesCount.textContent = card.likes.length;
   }
-  deleteCardButton.addEventListener('click', () =>
-    deleteCardFunction(cardItem)
-  );
+
+  const deleteCardButton = cardItem.querySelector('.card .card__delete-button');
+  if (card.owner._id === profile._id) {
+    openModalByClickOnObject(deleteCardButton, deleteAcceptPopup, () => {
+      deleteAcceptPopup.cardId = card._id;
+      deleteAcceptPopup.cardNode = cardItem;
+    });
+    deleteCardButton.classList.remove('card__delete-button_is-hided');
+  } else {
+    deleteCardButton.classList.add('card__delete-button_is-hided');
+  }
+
+  const likeCardButton = cardItem.querySelector('.card__like-button');
   likeCardButton.addEventListener('click', () =>
     likeCardFunction(likeCardButton)
   );
