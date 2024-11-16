@@ -24,8 +24,6 @@ const profileEditFormNameInput = profileEditForm.querySelector(
 const profileEditFormJobInput = profileEditForm.querySelector(
   '.popup__input_type_description'
 );
-const updatingProfileTitle = document.querySelector('.profile__title');
-const updatingProfileDesc = document.querySelector('.profile__description');
 const profileEditButton = document.querySelector('.profile__edit-button');
 const profileForm = document.forms['edit-profile'];
 const profileTitle = document.querySelector('.profile__title');
@@ -75,9 +73,11 @@ const submitProfileEditForm = (evt) => {
     name: profileEditFormNameInput.value,
     about: profileEditFormJobInput.value,
   };
-  const patchedProfilePromise = patchProfile(newProfileInfo);
-  patchedProfilePromise.then((profile) => {
-    setProfileInfo(profile);
+  addWaitingWhileSubmit(popupEditProfile, () => {
+    const patchedProfilePromise = patchProfile(newProfileInfo);
+    patchedProfilePromise.then((profile) => {
+      setProfileInfo(profile);
+    });
   });
   profileEditForm.reset();
   closeModal(popupEditProfile);
@@ -90,10 +90,12 @@ const submitNewAvatarForm = (evt) => {
   const newAvatar = {
     avatar: NewAvatarUrlInput.value,
   };
-  patchAvatar(newAvatar).then((profile) => {
-    setProfileInfo(profile);
-    newAvatarForm.reset();
-    closeModal(popupNewAvatar);
+  addWaitingWhileSubmit(popupNewAvatar, () => {
+    patchAvatar(newAvatar).then((profile) => {
+      setProfileInfo(profile);
+      newAvatarForm.reset();
+      closeModal(popupNewAvatar);
+    });
   });
 };
 
@@ -135,11 +137,21 @@ const addNewCardFormSubmit = (evt) => {
     link: addNewCardFormUrlInput.value,
   };
 
-  postCard(newCard).then((newCard) => {
-    cardPlacesNode.prepend(createCard(newCard, newCard.owner));
-    addNewCardForm.reset();
-    closeModal(popupAddNewCard);
+  addWaitingWhileSubmit(popupAddNewCard, () => {
+    postCard(newCard).then((newCard) => {
+      cardPlacesNode.prepend(createCard(newCard, newCard.owner));
+      addNewCardForm.reset();
+      closeModal(popupAddNewCard);
+    });
   });
+};
+
+const addWaitingWhileSubmit = (submitFormNode, submitFunc) => {
+  const button = submitFormNode.querySelector(popupButtonElementSelector);
+  const baseText = button.textContent;
+  button.textContent = baseText + '...';
+  submitFunc();
+  button.textContent = baseText;
 };
 
 addNewCardForm.addEventListener('submit', addNewCardFormSubmit);
