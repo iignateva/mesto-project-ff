@@ -1,3 +1,5 @@
+import { putLikeOnCard, deleteLikeOnCard } from './api';
+
 function createCardItemOnTemplate(
   cardTemplate,
   imagePopup,
@@ -12,10 +14,8 @@ function createCardItemOnTemplate(
   const cardTitle = cardItem.querySelector('.card__description .card__title');
   cardTitle.textContent = card.name;
 
-  const likesCount = cardItem.querySelector('.card__likes-count');
-  if (card.likes.length > 0) {
-    likesCount.textContent = card.likes.length;
-  }
+  const likesCountNode = cardItem.querySelector('.card__likes-count');
+  setLikeCount(likesCountNode, card);
 
   const deleteCardButton = cardItem.querySelector('.card .card__delete-button');
   if (card.owner._id === profile._id) {
@@ -30,7 +30,7 @@ function createCardItemOnTemplate(
 
   const likeCardButton = cardItem.querySelector('.card__like-button');
   likeCardButton.addEventListener('click', () =>
-    likeCardFunction(likeCardButton)
+    likeCardFunction(likeCardButton, likesCountNode, card._id)
   );
 
   const cardImage = setupImage(cardItem, card.link, card.name, '.card__image');
@@ -43,7 +43,20 @@ function deleteCard(cardItem) {
   cardItem.remove();
 }
 
-function likeCard(likeButton) {
+function setLikeCount(likesCountNode, card) {
+  likesCountNode.textContent = card.likes.length > 0 ? card.likes.length : '';
+}
+
+function likeCard(likeButton, likesCountNode, cardId) {
+  let promiseResCard;
+  if (likeButton.classList.contains('card__like-button_is-active')) {
+    promiseResCard = deleteLikeOnCard(cardId);
+  } else {
+    promiseResCard = putLikeOnCard(cardId);
+  }
+  promiseResCard.then((card) => {
+    setLikeCount(likesCountNode, card);
+  });
   likeButton.classList.toggle('card__like-button_is-active');
 }
 

@@ -53,4 +53,23 @@ const deleteCardById = (cardId) => {
   }
 };
 
-export { getInfoAboutMeAndCards, patchProfile, postCard, deleteCardById };
+const putLikeOnCard = (cardId) => {
+  if (cardId) {
+    return doFetch(`/cards/likes/${cardId}`, 'PUT');
+  }
+}
+
+const deleteLikeOnCard = (cardId) => {
+  if (cardId) {
+    return doFetch(`/cards/likes/${cardId}`, 'DELETE');
+  }
+};
+
+export {
+  getInfoAboutMeAndCards,
+  patchProfile,
+  postCard,
+  deleteCardById,
+  putLikeOnCard,
+  deleteLikeOnCard,
+};
