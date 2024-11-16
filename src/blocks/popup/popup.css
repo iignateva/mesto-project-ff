@@ -13,6 +13,7 @@
 @import url('./__input/_type_error/popup__input_type_error.css');
 @import url('./_type_action-accept/popup_type_action-accept.css');
 @import url('./__content/_accept/popup__content_accept.css');
+@import url('./_update-avatar/popup_update-avatar.css');
 
 .popup {
   font-family: 'Inter', Arial, sans-serif;

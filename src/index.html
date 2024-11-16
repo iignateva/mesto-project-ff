@@ -121,7 +121,25 @@
         </div>
       </div>
     </div>
-
+    <div class="popup popup_type_update-avatar popup_is-animated">
+      <div class="popup__content popup_update-avatar">
+        <button type="button" class="popup__close"></button>
+        <h3 class="popup__title">Обновить аватар</h3>
+        <form class="popup__form" name="new-avatar">
+          <input
+            id="new-avatar-link"
+            type="url"
+            name="link"
+            class="popup__input popup__input_type_url"
+            placeholder="Ссылка на аватар"
+            data-error-empty-value-message="Вы пропустили это поле."
+            required
+          />
+          <span class="popup__error new-avatar-link-error"></span>
+          <button type="submit" class="button popup__button">Сохранить</button>
+        </form>
+      </div>
+    </div>
     <div class="popup popup_type_action-accept" cardId cardNode>
       <div class="popup__content popup__content_accept">
         <h2>Вы уверены?</h2>

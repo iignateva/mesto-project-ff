@@ -11,6 +11,7 @@ import {
   patchProfile,
   postCard,
   deleteCardById,
+  patchAvatar,
 } from './components/api';
 
 const cardTemplate = document.querySelector('#card-template').content;
@@ -52,6 +53,11 @@ const deleteAcceptButtonOk = popupDeleteAccept.querySelector(
   popupButtonElementSelector
 );
 
+const popupNewAvatar = document.querySelector('.popup_type_update-avatar');
+const newAvatarForm = popupNewAvatar.querySelector('.popup__form');
+const NewAvatarUrlInput = popupNewAvatar.querySelector(
+  '.popup__input_type_url'
+);
 const deleteCardHandler = () => {
   const cardId = popupDeleteAccept.cardId;
   const cardNode = popupDeleteAccept.cardNode;
@@ -79,6 +85,20 @@ const submitProfileEditForm = (evt) => {
 
 profileEditForm.addEventListener('submit', submitProfileEditForm);
 
+const submitNewAvatarForm = (evt) => {
+  evt.preventDefault();
+  const newAvatar = {
+    avatar: NewAvatarUrlInput.value,
+  };
+  patchAvatar(newAvatar).then((profile) => {
+    setProfileInfo(profile);
+    newAvatarForm.reset();
+    closeModal(popupNewAvatar);
+  });
+};
+
+newAvatarForm.addEventListener('submit', submitNewAvatarForm);
+
 const clearValidationOnForm = (form) => {
   clearValidation(form, {
     inputSelector: inputElementSelector,
@@ -94,6 +114,8 @@ const setProfileInfo = (profile) => {
   profileDesc.textContent = profile.about;
   profileImage.style.backgroundImage = `url(${profile.avatar})`;
 };
+
+openModalByClickOnObject(profileImage, popupNewAvatar);
 
 const initProfileForm = () => {
   clearValidationOnForm(profileForm);

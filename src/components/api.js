@@ -65,6 +65,13 @@ const deleteLikeOnCard = (cardId) => {
   }
 };
 
+const patchAvatar = (avatar) => {
+   if (avatar && avatar.avatar) {
+    return doFetch('/users/me/avatar', 'PATCH', JSON.stringify(avatar));
+   }
+   
+}
+
 export {
   getInfoAboutMeAndCards,
   patchProfile,
@@ -72,4 +79,5 @@ export {
   deleteCardById,
   putLikeOnCard,
   deleteLikeOnCard,
+  patchAvatar,
 };
