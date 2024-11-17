@@ -140,11 +140,19 @@
         </form>
       </div>
     </div>
-    <div class="popup popup_type_action-accept" cardId cardNode>
+    <div class="popup popup_type_action-accept">
       <div class="popup__content popup__content_accept">
         <h2>Вы уверены?</h2>
         <span class="popup__error new-place-link-error"></span>
-        <button type="button" class="button popup__button">Да</button>
+        <button
+          type="button"
+          class="button popup__button"
+          cardId
+          cardNode
+          acceptPopup
+        >
+          Да
+        </button>
         <button type="button" class="popup__close"></button>
       </div>
     </div>

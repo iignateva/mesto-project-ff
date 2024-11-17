@@ -57,7 +57,7 @@ const putLikeOnCard = (cardId) => {
   if (cardId) {
     return doFetch(`/cards/likes/${cardId}`, 'PUT');
   }
-}
+};
 
 const deleteLikeOnCard = (cardId) => {
   if (cardId) {
@@ -66,10 +66,10 @@ const deleteLikeOnCard = (cardId) => {
 };
 
 const patchAvatar = (avatar) => {
-   if (avatar && avatar.avatar) {
+  if (avatar && avatar.avatar) {
     return doFetch('/users/me/avatar', 'PATCH', JSON.stringify(avatar));
-   }
-}
+  }
+};
 
 export {
   getInfoAboutMeAndCards,

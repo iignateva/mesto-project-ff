@@ -1,24 +1,19 @@
 import './pages/index.css';
-import {
-  createCardItemOnTemplate,
-  deleteCard,
-  likeCard,
-} from './components/card';
+import { createCardItemOnTemplate, likeCard } from './components/card';
 import { openModalByClickOnObject, closeModal } from './components/modal';
 import { clearValidation, enableValidation } from './components/validation';
 import {
   getInfoAboutMeAndCards,
   patchProfile,
   postCard,
-  deleteCardById,
   patchAvatar,
 } from './components/api';
+import { popupButtonSelectorName } from './components/const';
 
 const formSelectorName = '.popup__form';
 const inputSelectorName = '.popup__input';
 const inputErrorClassName = 'popup__input_type_error';
 const errorVisibleClassName = 'popup__error_visible';
-const popupButtonSelectorName = '.popup__button';
 const inactiveButtonClassName = 'popup__button_disabled';
 
 const cardTemplate = document.querySelector('#card-template').content;
@@ -48,9 +43,6 @@ const addNewCardButton = document.querySelector('.profile__add-button');
 const profileImage = document.querySelector('.profile__image');
 
 const popupDeleteAccept = document.querySelector('.popup_type_action-accept');
-const deleteAcceptButtonOk = popupDeleteAccept.querySelector(
-  popupButtonSelectorName
-);
 
 const popupNewAvatar = document.querySelector('.popup_type_update-avatar');
 const newAvatarForm = popupNewAvatar.querySelector(formSelectorName);
@@ -80,17 +72,6 @@ function createCards(cards, profile) {
   });
 }
 
-const deleteCardHandler = () => {
-  const cardId = popupDeleteAccept.cardId;
-  const cardNode = popupDeleteAccept.cardNode;
-  if (cardId && cardNode) {
-    deleteCardById(cardId);
-    deleteCard(cardNode);
-  }
-  closeModal(popupDeleteAccept);
-};
-deleteAcceptButtonOk.addEventListener('click', deleteCardHandler);
-
 const clearValidationOnForm = (form) => {
   clearValidation(form, {
     inputSelector: inputSelectorName,
@@ -107,11 +88,12 @@ const submitProfileEditForm = (evt) => {
     name: profileEditFormNameInput.value,
     about: profileEditFormJobInput.value,
   };
-  addWaitingWhileSubmit(popupEditProfile, () => {
+  addWaitingWhileSubmit(popupEditProfile, (callback) => {
     const patchedProfilePromise = patchProfile(newProfileInfo);
     patchedProfilePromise.then((profile) => {
       setProfileInfo(profile);
     });
+    callback();
   });
   profileEditForm.reset();
   closeModal(popupEditProfile);
@@ -124,13 +106,14 @@ const submitNewAvatarForm = (evt) => {
   const newAvatar = {
     avatar: NewAvatarUrlInput.value,
   };
-  addWaitingWhileSubmit(popupNewAvatar, () => {
+  addWaitingWhileSubmit(popupNewAvatar, (callback) => {
     patchAvatar(newAvatar).then((profile) => {
       setProfileInfo(profile);
-      newAvatarForm.reset();
-      closeModal(popupNewAvatar);
+      callback();
     });
   });
+  newAvatarForm.reset();
+  closeModal(popupNewAvatar);
 };
 
 newAvatarForm.addEventListener('submit', submitNewAvatarForm);
@@ -160,11 +143,12 @@ const addNewCardFormSubmit = (evt) => {
     link: addNewCardFormUrlInput.value,
   };
 
-  addWaitingWhileSubmit(popupAddNewCard, () => {
+  addWaitingWhileSubmit(popupAddNewCard, (callback) => {
     postCard(newCard).then((newCard) => {
       addNewCardForm.reset();
       closeModal(popupAddNewCard);
       addCardOnPage(newCard, newCard.owner);
+      callback();
     });
   });
 };
@@ -173,8 +157,9 @@ const addWaitingWhileSubmit = (submitFormNode, submitFunc) => {
   const button = submitFormNode.querySelector(popupButtonSelectorName);
   const baseText = button.textContent;
   button.textContent = baseText + '...';
-  submitFunc();
-  button.textContent = baseText;
+  submitFunc(() => {
+    button.textContent = baseText;
+  });
 };
 
 addNewCardForm.addEventListener('submit', addNewCardFormSubmit);

@@ -18,7 +18,6 @@ const enableValidation = (
       });
     });
   });
-
 };
 
 const showInputError = (
@@ -82,18 +81,18 @@ const toggleButtonState = (inputList, buttonElement, inactiveButtonClass) => {
   if (hasInvalidInput(inputList)) {
     doButtonDisabled(buttonElement, inactiveButtonClass);
   } else {
-    doButtonEnabled(buttonElement,inactiveButtonClass);
+    doButtonEnabled(buttonElement, inactiveButtonClass);
   }
-}; 
+};
 
 const doButtonDisabled = (buttonElement, inactiveButtonClass) => {
-    buttonElement.disabled = true;
-    buttonElement.classList.add(inactiveButtonClass);
-}
+  buttonElement.disabled = true;
+  buttonElement.classList.add(inactiveButtonClass);
+};
 
 const doButtonEnabled = (buttonElement, inactiveButtonClass) => {
-    buttonElement.disabled = false;
-    buttonElement.classList.remove(inactiveButtonClass);
+  buttonElement.disabled = false;
+  buttonElement.classList.remove(inactiveButtonClass);
 };
 
 const clearValidation = (form, validationConfig) => {
