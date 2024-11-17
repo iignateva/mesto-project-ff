@@ -14,10 +14,17 @@ import {
   patchAvatar,
 } from './components/api';
 
+const formSelectorName = '.popup__form';
+const inputSelectorName = '.popup__input';
+const inputErrorClassName = 'popup__input_type_error';
+const errorVisibleClassName = 'popup__error_visible';
+const popupButtonSelectorName = '.popup__button';
+const inactiveButtonClassName = 'popup__button_disabled';
+
 const cardTemplate = document.querySelector('#card-template').content;
 const cardPlacesNode = document.querySelector('.places .places__list');
 const popupEditProfile = document.querySelector('.popup_type_edit');
-const profileEditForm = popupEditProfile.querySelector('.popup__form');
+const profileEditForm = popupEditProfile.querySelector(formSelectorName);
 const profileEditFormNameInput = profileEditForm.querySelector(
   '.popup__input_type_name'
 );
@@ -29,7 +36,7 @@ const profileForm = document.forms['edit-profile'];
 const profileTitle = document.querySelector('.profile__title');
 const profileDesc = document.querySelector('.profile__description');
 const popupAddNewCard = document.querySelector('.popup_type_new-card');
-const addNewCardForm = popupAddNewCard.querySelector('.popup__form');
+const addNewCardForm = popupAddNewCard.querySelector(formSelectorName);
 const addNewCardFormNameInput = addNewCardForm.querySelector(
   '.popup__input_type_card-name'
 );
@@ -40,22 +47,39 @@ const popupShowImage = document.querySelector('.popup_type_image');
 const addNewCardButton = document.querySelector('.profile__add-button');
 const profileImage = document.querySelector('.profile__image');
 
-const inputElementSelector = '.popup__input';
-const inputErrorClassName = 'popup__input_type_error';
-const errorVisibleClassName = 'popup__error_visible';
-const popupButtonElementSelector = '.popup__button';
-const inactiveButtonClassName = 'popup__button_disabled';
-
 const popupDeleteAccept = document.querySelector('.popup_type_action-accept');
 const deleteAcceptButtonOk = popupDeleteAccept.querySelector(
-  popupButtonElementSelector
+  popupButtonSelectorName
 );
 
 const popupNewAvatar = document.querySelector('.popup_type_update-avatar');
-const newAvatarForm = popupNewAvatar.querySelector('.popup__form');
+const newAvatarForm = popupNewAvatar.querySelector(formSelectorName);
 const NewAvatarUrlInput = popupNewAvatar.querySelector(
   '.popup__input_type_url'
 );
+
+const addCardOnPage = (card, profile) => {
+  cardPlacesNode.append(createCard(card, profile));
+};
+
+function createCard(card, profile) {
+  return createCardItemOnTemplate(
+    cardTemplate,
+    popupShowImage,
+    card,
+    profile,
+    popupDeleteAccept,
+    likeCard,
+    openModalByClickOnObject
+  );
+}
+
+function createCards(cards, profile) {
+  cards.forEach((card) => {
+    addCardOnPage(card, profile);
+  });
+}
+
 const deleteCardHandler = () => {
   const cardId = popupDeleteAccept.cardId;
   const cardNode = popupDeleteAccept.cardNode;
@@ -66,6 +90,16 @@ const deleteCardHandler = () => {
   closeModal(popupDeleteAccept);
 };
 deleteAcceptButtonOk.addEventListener('click', deleteCardHandler);
+
+const clearValidationOnForm = (form) => {
+  clearValidation(form, {
+    inputSelector: inputSelectorName,
+    inputErrorClass: inputErrorClassName,
+    errorVisibleClass: errorVisibleClassName,
+    buttonElementSelector: popupButtonSelectorName,
+    inactiveButtonClass: inactiveButtonClassName,
+  });
+};
 
 const submitProfileEditForm = (evt) => {
   evt.preventDefault();
@@ -101,23 +135,11 @@ const submitNewAvatarForm = (evt) => {
 
 newAvatarForm.addEventListener('submit', submitNewAvatarForm);
 
-const clearValidationOnForm = (form) => {
-  clearValidation(form, {
-    inputSelector: inputElementSelector,
-    inputErrorClass: inputErrorClassName,
-    errorVisibleClass: errorVisibleClassName,
-    buttonElementSelector: popupButtonElementSelector,
-    inactiveButtonClass: inactiveButtonClassName,
-  });
-};
-
 const setProfileInfo = (profile) => {
   profileTitle.textContent = profile.name;
   profileDesc.textContent = profile.about;
   profileImage.style.backgroundImage = `url(${profile.avatar})`;
 };
-
-openModalByClickOnObject(profileImage, popupNewAvatar);
 
 const initProfileForm = () => {
   clearValidationOnForm(profileForm);
@@ -127,6 +149,7 @@ const initProfileForm = () => {
   }
 };
 
+openModalByClickOnObject(profileImage, popupNewAvatar);
 openModalByClickOnObject(profileEditButton, popupEditProfile, initProfileForm);
 
 const addNewCardFormSubmit = (evt) => {
@@ -139,15 +162,15 @@ const addNewCardFormSubmit = (evt) => {
 
   addWaitingWhileSubmit(popupAddNewCard, () => {
     postCard(newCard).then((newCard) => {
-      cardPlacesNode.prepend(createCard(newCard, newCard.owner));
       addNewCardForm.reset();
       closeModal(popupAddNewCard);
+      addCardOnPage(newCard, newCard.owner);
     });
   });
 };
 
 const addWaitingWhileSubmit = (submitFormNode, submitFunc) => {
-  const button = submitFormNode.querySelector(popupButtonElementSelector);
+  const button = submitFormNode.querySelector(popupButtonSelectorName);
   const baseText = button.textContent;
   button.textContent = baseText + '...';
   submitFunc();
@@ -163,42 +186,24 @@ const initAddNewCardForm = () => {
 
 openModalByClickOnObject(addNewCardButton, popupAddNewCard, initAddNewCardForm);
 
-function createCard(card, profile) {
-  return createCardItemOnTemplate(
-    cardTemplate,
-    popupShowImage,
-    card,
-    profile,
-    deleteCard,
-    popupDeleteAccept,
-    likeCard,
-    openModalByClickOnObject
-  );
-}
-
-function createCards(cards, profile) {
-  cards.forEach((card) => {
-    cardPlacesNode.append(createCard(card, profile));
-  });
-}
-
 function fillPage() {
   const promises = getInfoAboutMeAndCards();
   Promise.all(promises).then((results) => {
     const profile = results[0];
+    const cards = results[1];
     setProfileInfo(profile);
-    createCards(results[1], profile);
+    createCards(cards, profile);
   });
 }
 
-// Вывести карточки на страницу
-fillPage();
-
 enableValidation(
-  '.popup__form',
-  inputElementSelector,
-  popupButtonElementSelector,
+  formSelectorName,
+  inputSelectorName,
+  popupButtonSelectorName,
   inactiveButtonClassName,
   inputErrorClassName,
   errorVisibleClassName
 );
+
+// Вывести карточки на страницу
+fillPage();

@@ -69,7 +69,6 @@ const patchAvatar = (avatar) => {
    if (avatar && avatar.avatar) {
     return doFetch('/users/me/avatar', 'PATCH', JSON.stringify(avatar));
    }
-   
 }
 
 export {

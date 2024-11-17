@@ -1,11 +1,12 @@
 import { putLikeOnCard, deleteLikeOnCard } from './api';
 
+const hideDeleteCardBtnClassName = 'card__delete-button_is-hided';
+
 function createCardItemOnTemplate(
   cardTemplate,
   imagePopup,
   card,
   profile,
-  deleteCardFunction,
   deleteAcceptPopup,
   likeCardFunction,
   openModalByClickOnObject
@@ -23,9 +24,9 @@ function createCardItemOnTemplate(
       deleteAcceptPopup.cardId = card._id;
       deleteAcceptPopup.cardNode = cardItem;
     });
-    deleteCardButton.classList.remove('card__delete-button_is-hided');
+    deleteCardButton.classList.remove(hideDeleteCardBtnClassName);
   } else {
-    deleteCardButton.classList.add('card__delete-button_is-hided');
+    deleteCardButton.classList.add(hideDeleteCardBtnClassName);
   }
 
   const likeCardButton = cardItem.querySelector('.card__like-button');
