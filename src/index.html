@@ -43,7 +43,7 @@
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Редактировать профиль</h3>
-          <form class="popup__form" name="edit-profile">
+          <form class="popup__form" name="edit-profile" novalidate>
             <input
               id="edit-profile-name"
               type="text"
@@ -66,7 +66,7 @@
               minlength="2"
               maxlength="200"
               placeholder="Занятие"
-              pattern="^[a-zA-Zа-яёА-ЯЁ\-\s\,]+$"
+              pattern="^[a-zA-Z,а-яёА-ЯЁ\-\s]+$"
               data-error-pattern-mismatch-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
               data-error-empty-value-message="Вы пропустили это поле."
               required
@@ -82,7 +82,7 @@
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Новое место</h3>
-          <form class="popup__form" name="new-place">
+          <form class="popup__form" name="new-place" novalidate>
             <input
               id="new-place-name"
               type="text"
@@ -125,7 +125,7 @@
       <div class="popup__content popup_update-avatar">
         <button type="button" class="popup__close"></button>
         <h3 class="popup__title">Обновить аватар</h3>
-        <form class="popup__form" name="new-avatar">
+        <form class="popup__form" name="new-avatar" novalidate>
           <input
             id="new-avatar-link"
             type="url"
@@ -148,7 +148,6 @@
           type="button"
           class="button popup__button"
           cardId
-          cardNode
           acceptPopup
         >
           Да

@@ -1,5 +1,5 @@
 import './pages/index.css';
-import { createCardItemOnTemplate, likeCard } from './components/card';
+import { createCardItemOnTemplate, setLikeCount } from './components/card';
 import { openModalByClickOnObject, closeModal } from './components/modal';
 import { clearValidation, enableValidation } from './components/validation';
 import {
@@ -7,19 +7,23 @@ import {
   patchProfile,
   postCard,
   patchAvatar,
+  deleteCardById,
+  deleteLikeOnCard,
+  putLikeOnCard,
 } from './components/api';
-import { popupButtonSelectorName } from './components/const';
 
 const formSelectorName = '.popup__form';
 const inputSelectorName = '.popup__input';
+const popupButtonSelectorName = '.popup__button';
 const inputErrorClassName = 'popup__input_type_error';
 const errorVisibleClassName = 'popup__error_visible';
 const inactiveButtonClassName = 'popup__button_disabled';
+const likeIsActiveClassName = 'card__like-button_is-active';
 
 const cardTemplate = document.querySelector('#card-template').content;
 const cardPlacesNode = document.querySelector('.places .places__list');
 const popupEditProfile = document.querySelector('.popup_type_edit');
-const profileEditForm = popupEditProfile.querySelector(formSelectorName);
+const profileEditForm = document.forms['edit-profile'];
 const profileEditFormNameInput = profileEditForm.querySelector(
   '.popup__input_type_name'
 );
@@ -27,11 +31,10 @@ const profileEditFormJobInput = profileEditForm.querySelector(
   '.popup__input_type_description'
 );
 const profileEditButton = document.querySelector('.profile__edit-button');
-const profileForm = document.forms['edit-profile'];
 const profileTitle = document.querySelector('.profile__title');
 const profileDesc = document.querySelector('.profile__description');
 const popupAddNewCard = document.querySelector('.popup_type_new-card');
-const addNewCardForm = popupAddNewCard.querySelector(formSelectorName);
+const addNewCardForm = document.forms['new-place'];
 const addNewCardFormNameInput = addNewCardForm.querySelector(
   '.popup__input_type_card-name'
 );
@@ -45,8 +48,8 @@ const profileImage = document.querySelector('.profile__image');
 const popupDeleteAccept = document.querySelector('.popup_type_action-accept');
 
 const popupNewAvatar = document.querySelector('.popup_type_update-avatar');
-const newAvatarForm = popupNewAvatar.querySelector(formSelectorName);
-const NewAvatarUrlInput = popupNewAvatar.querySelector(
+const newAvatarForm = document.forms['new-avatar'];
+const newAvatarUrlInput = popupNewAvatar.querySelector(
   '.popup__input_type_url'
 );
 
@@ -62,7 +65,10 @@ function createCard(card, profile) {
     profile,
     popupDeleteAccept,
     likeCard,
-    openModalByClickOnObject
+    openModalByClickOnObject,
+    setupImage,
+    initImagePopupFunc,
+    deleteCardFunc
   );
 }
 
@@ -90,13 +96,17 @@ const submitProfileEditForm = (evt) => {
   };
   addWaitingWhileSubmit(popupEditProfile, (callback) => {
     const patchedProfilePromise = patchProfile(newProfileInfo);
-    patchedProfilePromise.then((profile) => {
-      setProfileInfo(profile);
-    });
-    callback();
+    patchedProfilePromise
+      .then((profile) => {
+        setProfileInfo(profile);
+        profileEditForm.reset();
+        closeModal(popupEditProfile);
+      })
+      .catch((err) => {
+        console.error(`Got an error while load profile ${err}`);
+      })
+      .finally(callback());
   });
-  profileEditForm.reset();
-  closeModal(popupEditProfile);
 };
 
 profileEditForm.addEventListener('submit', submitProfileEditForm);
@@ -104,16 +114,20 @@ profileEditForm.addEventListener('submit', submitProfileEditForm);
 const submitNewAvatarForm = (evt) => {
   evt.preventDefault();
   const newAvatar = {
-    avatar: NewAvatarUrlInput.value,
+    avatar: newAvatarUrlInput.value,
   };
   addWaitingWhileSubmit(popupNewAvatar, (callback) => {
-    patchAvatar(newAvatar).then((profile) => {
-      setProfileInfo(profile);
-      callback();
-    });
+    patchAvatar(newAvatar)
+      .then((profile) => {
+        setProfileInfo(profile);
+        newAvatarForm.reset();
+        closeModal(popupNewAvatar);
+      })
+      .catch((err) => {
+        console.error(`Got an error while update avatar: ${err}`);
+      })
+      .finally(callback());
   });
-  newAvatarForm.reset();
-  closeModal(popupNewAvatar);
 };
 
 newAvatarForm.addEventListener('submit', submitNewAvatarForm);
@@ -125,10 +139,10 @@ const setProfileInfo = (profile) => {
 };
 
 const initProfileForm = () => {
-  clearValidationOnForm(profileForm);
-  if (profileForm) {
-    profileForm.elements.name.value = profileTitle.textContent;
-    profileForm.elements.description.value = profileDesc.textContent;
+  clearValidationOnForm(profileEditForm);
+  if (profileEditForm) {
+    profileEditForm.elements.name.value = profileTitle.textContent;
+    profileEditForm.elements.description.value = profileDesc.textContent;
   }
 };
 
@@ -144,12 +158,16 @@ const addNewCardFormSubmit = (evt) => {
   };
 
   addWaitingWhileSubmit(popupAddNewCard, (callback) => {
-    postCard(newCard).then((newCard) => {
-      addNewCardForm.reset();
-      closeModal(popupAddNewCard);
-      addCardOnPage(newCard, newCard.owner);
-      callback();
-    });
+    postCard(newCard)
+      .then((newCard) => {
+        addNewCardForm.reset();
+        closeModal(popupAddNewCard);
+        addCardOnPage(newCard, newCard.owner);
+      })
+      .catch((err) => {
+        console.error(`Got an error while post new card: ${err}`);
+      })
+      .finally(callback());
   });
 };
 
@@ -171,15 +189,80 @@ const initAddNewCardForm = () => {
 
 openModalByClickOnObject(addNewCardButton, popupAddNewCard, initAddNewCardForm);
 
+const buttonAcceptDeleteCardHandler = (evt) => {
+  const target = evt.target;
+  const cardId = target.cardId;
+  if (cardId) {
+    deleteCardById(cardId)
+      .then(() => {
+        deleteCardFromPage(cardId);
+        target.removeEventListener('click', buttonAcceptDeleteCardHandler);
+        const acceptPopup = target.acceptPopup;
+        closeModal(acceptPopup);
+      })
+      .catch((err) => {
+        console.error(`Got error: ${err}`);
+      });
+  }
+};
+
+const deleteCardFromPage = (cardId) => {
+  const cardItem = document.querySelector(`#id_${cardId}`);
+  if (cardItem) {
+    cardItem.remove();
+  }
+};
+
+const deleteCardFunc = (popup, clickedTrashButton) => {
+  const cardId = clickedTrashButton.cardId;
+  const acceptDeleteButton = popup.querySelector(popupButtonSelectorName);
+  acceptDeleteButton.cardId = cardId;
+  acceptDeleteButton.acceptPopup = popup;
+  acceptDeleteButton.addEventListener('click', buttonAcceptDeleteCardHandler);
+};
+
 function fillPage() {
   const promises = getInfoAboutMeAndCards();
-  Promise.all(promises).then((results) => {
-    const profile = results[0];
-    const cards = results[1];
-    setProfileInfo(profile);
-    createCards(cards, profile);
-  });
+  Promise.all(promises)
+    .then(([profile, cards]) => {
+      setProfileInfo(profile);
+      createCards(cards, profile);
+    })
+    .catch((err) => {
+      console.error(`Got an error while load page: ${err}`);
+    });
 }
+
+const setupImage = (parentNode, srcProp, altProp, classSelector) => {
+  const imageNode = parentNode.querySelector(classSelector);
+  imageNode.src = srcProp;
+  imageNode.alt = altProp;
+  return imageNode;
+};
+
+const initImagePopupFunc = (popup, imageNode) => {
+  setupImage(popup, imageNode.src, imageNode.alt, '.popup__image');
+  const caption = popup.querySelector('.popup__caption');
+  caption.textContent = imageNode.alt;
+  popup.classList.add('popup__image_viewing');
+};
+
+const likeCard = (likeButton, likesCountNode, cardId) => {
+  let promiseResCard;
+  if (likeButton.classList.contains(likeIsActiveClassName)) {
+    promiseResCard = deleteLikeOnCard(cardId);
+  } else {
+    promiseResCard = putLikeOnCard(cardId);
+  }
+  promiseResCard
+    .then((card) => {
+      setLikeCount(likesCountNode, card);
+      likeButton.classList.toggle(likeIsActiveClassName);
+    })
+    .catch((err) => {
+      console.error(`Got an error: ${err}`);
+    });
+};
 
 enableValidation(
   formSelectorName,
