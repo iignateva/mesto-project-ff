@@ -46,4 +46,5 @@
 .popup{display:none;font-family:Inter,Arial,sans-serif;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;background-color:rgba(0,0,0,.5);bottom:0;justify-content:center;left:0;position:fixed;right:0;top:0;z-index:10}
 .popup_is-animated{display:-webkit-box;display:-ms-flexbox;display:flex;opacity:0;pointer-events:none;-webkit-transition:visibility 0s .6s,opacity .6s;transition:visibility 0s .6s,opacity .6s;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;visibility:hidden}
 .popup_is-opened{display:-webkit-box;display:-ms-flexbox;display:flex;height:100%;opacity:1;pointer-events:all;-webkit-transition:visibility 0s,opacity .6s;transition:visibility 0s,opacity .6s;visibility:visible;width:100%}
+.popup__image_viewing{background-color:rgba(0,0,0,.9)}
 
