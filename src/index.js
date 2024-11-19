@@ -54,7 +54,7 @@ const newAvatarUrlInput = popupNewAvatar.querySelector(
 );
 
 const addCardOnPage = (card, profile) => {
-  cardPlacesNode.append(createCard(card, profile));
+  cardPlacesNode.prepend(createCard(card, profile));
 };
 
 function createCard(card, profile) {
@@ -146,7 +146,12 @@ const initProfileForm = () => {
   }
 };
 
-openModalByClickOnObject(profileImage, popupNewAvatar);
+const initNewAvatarForm = () => {
+  newAvatarForm.reset();
+  clearValidationOnForm(newAvatarForm);
+};
+
+openModalByClickOnObject(profileImage, popupNewAvatar, initNewAvatarForm);
 openModalByClickOnObject(profileEditButton, popupEditProfile, initProfileForm);
 
 const addNewCardFormSubmit = (evt) => {
